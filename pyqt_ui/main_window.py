@@ -42,4 +42,4 @@ class MainWindow(QMainWindow):
             self.scenario_widget = Scenario3()
 
         # Add the new scenario widget to the layout
-        self.layout.addWidget(self.scenario_widget, 1, 0, 1, 2)
+        self.layout.addWidget(self.scenario_widget, 1, 0, 1, 8)
