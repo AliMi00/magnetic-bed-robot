@@ -1,7 +1,5 @@
-# views/main_window.py
-
 import os
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
+from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QStackedWidget
 from PyQt6.QtCore import pyqtSlot
 from .simulation_view import SimulationView
 from .real_data_view import RealDataView
@@ -13,6 +11,7 @@ class MainWindow(QMainWindow):
         self.config = config_manager
         self.init_ui()
         self.setStyleSheet("background-color: lightgray;")
+        
         # Initialize data simulator
         from core.data_simulator import DataSimulator
         self.data_simulator = DataSimulator()
@@ -28,14 +27,17 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Magnet Placement Machine Control")
         self.setGeometry(100, 100, width, height)
 
+        # Central widget with QStackedWidget
+        self.stacked_widget = QStackedWidget()
+        self.setCentralWidget(self.stacked_widget)
 
-        # Central widget
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
+        # Initialize different views
+        self.main_view = QWidget()
+        self.detailed_view = DetailedView(self.config, real_data=False)
 
-        # Layouts
+        # Setup main view layout
         main_layout = QHBoxLayout()
-        central_widget.setLayout(main_layout)
+        self.main_view.setLayout(main_layout)
 
         # Simulation View (Left Half)
         self.simulation_view = SimulationView(self.config)
@@ -49,24 +51,36 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.simulation_view)
         main_layout.addWidget(self.real_data_view)
 
+        # Add views to stacked widget
+        self.stacked_widget.addWidget(self.main_view)       # Index 0
+        self.stacked_widget.addWidget(self.detailed_view)   # Index 1
+
+        # Connect the back_to_main signal from DetailedView to the slot
+        self.detailed_view.back_to_main.connect(self.show_main_view)
+
     @pyqtSlot(dict)
     def update_real_data_view(self, data):
         """Update the real data view with sensor data."""
         self.real_data_view.update_overlay(data)
 
     def open_detailed_view_simulated(self):
-        """Transition to the detailed view."""
-        self.detailed_view = DetailedView(self.config, real_data=False)
-        self.detailed_view.show()
-        self.close()
-    def open_detailed_view_real(self):
-        """Transition to the detailed view."""
-        self.detailed_view = DetailedView(self.config, real_data=True)
-        self.detailed_view.show()
-        self.close()
+        """Switch to the detailed view with simulated data."""
+        self.detailed_view.set_real_data(False)
+        self.stacked_widget.setCurrentWidget(self.detailed_view)
 
+    def open_detailed_view_real(self):
+        """Switch to the detailed view with real data."""
+        self.detailed_view.set_real_data(True)
+        self.stacked_widget.setCurrentWidget(self.detailed_view)
+
+    @pyqtSlot()
+    def show_main_view(self):
+        """Switch back to the main view."""
+        self.stacked_widget.setCurrentWidget(self.main_view)
+        print("Switched back to main view.")
 
     def closeEvent(self, event):
         """Handle the window close event."""
         self.data_simulator.stop()
+        self.detailed_view.cleanup()
         event.accept()
