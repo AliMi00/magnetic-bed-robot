@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.config = config_manager
         self.init_ui()
-
+        self.setStyleSheet("background-color: lightgray;")
         # Initialize data simulator
         from core.data_simulator import DataSimulator
         self.data_simulator = DataSimulator()
@@ -24,8 +24,10 @@ class MainWindow(QMainWindow):
         # Set window size from config
         width = self.config.get('window_settings', 'width', default=1200)
         height = self.config.get('window_settings', 'height', default=800)
+        background_color = self.config.get('window_settings', 'background_color', default='lightgray')
         self.setWindowTitle("Magnet Placement Machine Control")
         self.setGeometry(100, 100, width, height)
+
 
         # Central widget
         central_widget = QWidget()
@@ -37,11 +39,11 @@ class MainWindow(QMainWindow):
 
         # Simulation View (Left Half)
         self.simulation_view = SimulationView(self.config)
-        self.simulation_view.clicked.connect(self.open_detailed_view)
+        self.simulation_view.clicked.connect(self.open_detailed_view_simulated)
 
         # Real Data View (Right Half)
         self.real_data_view = RealDataView(self.config)
-        self.real_data_view.clicked.connect(self.open_detailed_view)
+        self.real_data_view.clicked.connect(self.open_detailed_view_real)
 
         # Add to main layout
         main_layout.addWidget(self.simulation_view)
@@ -52,11 +54,17 @@ class MainWindow(QMainWindow):
         """Update the real data view with sensor data."""
         self.real_data_view.update_overlay(data)
 
-    def open_detailed_view(self):
+    def open_detailed_view_simulated(self):
         """Transition to the detailed view."""
-        self.detailed_view = DetailedView(self.config)
+        self.detailed_view = DetailedView(self.config, real_data=False)
         self.detailed_view.show()
         self.close()
+    def open_detailed_view_real(self):
+        """Transition to the detailed view."""
+        self.detailed_view = DetailedView(self.config, real_data=True)
+        self.detailed_view.show()
+        self.close()
+
 
     def closeEvent(self, event):
         """Handle the window close event."""

@@ -24,7 +24,7 @@ class GraphSection(QWidget):
 
         # Drop-down to select data type
         self.data_selector = QComboBox()
-        self.data_selector.addItems(['Temperature', 'Pressure', 'Humidity', 'Vibration'])
+        self.data_selector.addItems(['motor1', 'motor2', 'motor3', 'motor4'])
         self.data_selector.currentIndexChanged.connect(self.change_graph)
         layout.addWidget(self.data_selector)
 
