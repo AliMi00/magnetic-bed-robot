@@ -19,7 +19,7 @@ class CameraStreamHandler(QObject):
         """Start the camera stream in a separate thread."""
         self.cap = cv2.VideoCapture(self.camera_index)
         if not self.cap.isOpened():
-            QMessageBox.warning(None, "Camera Error", "Unable to access the camera.")
+            # QMessageBox.warning(None, "Camera Error", "Unable to access the camera.")
             return
         self.running = True
         threading.Thread(target=self.run, daemon=True).start()
