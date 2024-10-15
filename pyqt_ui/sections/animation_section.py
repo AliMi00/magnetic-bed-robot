@@ -15,7 +15,7 @@ class AnimationSection(QWidget):
         self.setLayout(layout)
 
         # Title
-        title = QLabel("Animation Data")
+        title = QLabel("3D Simulation")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet("font-weight: bold; font-size: 16px;")
         layout.addWidget(title)

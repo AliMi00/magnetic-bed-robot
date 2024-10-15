@@ -1,0 +1,4 @@
+# parameters/motor_torque_sliders.yaml
+
+slider1: [1, 3]
+slider2: [2, 4]
