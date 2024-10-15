@@ -5,6 +5,8 @@ import threading
 import time
 from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6.QtGui import QImage
+from PyQt6.QtWidgets import QMessageBox
+
 
 class CameraStreamHandler(QObject):
     frame_updated = pyqtSignal(QImage)
@@ -19,7 +21,7 @@ class CameraStreamHandler(QObject):
         """Start the camera stream in a separate thread."""
         self.cap = cv2.VideoCapture(self.camera_index)
         if not self.cap.isOpened():
-            # QMessageBox.warning(None, "Camera Error", "Unable to access the camera.")
+            QMessageBox.warning(None, "Camera Error", "Unable to access the camera.")
             return
         self.running = True
         threading.Thread(target=self.run, daemon=True).start()
