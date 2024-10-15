@@ -1,0 +1,12 @@
+{
+    "window_settings": {
+      "width": 1200,
+      "height": 800,
+      "simulation_background": "assets/sim.jpg",
+      "real_data_background": "assets/real.jpg"
+    },
+    "motor_slider_synchronization": {
+      "sync_mode": "independent"  
+    }
+  }
+  
