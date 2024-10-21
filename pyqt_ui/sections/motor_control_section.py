@@ -12,6 +12,12 @@ class MotorControlSection(QWidget):
         self.motor_torque_mapping = self.load_motor_mapping("config/param_motors_control.yaml")  
         self.init_ui()
         self.init_motor_controller()
+     
+    def load_motor_mapping(self, filename):
+        """Load motor mapping from a .yaml file"""
+        with open(filename, "r") as file:
+            return yaml.safe_load(file)
+    
 
     def init_ui(self):
         """Initialize the Motor Control Section."""
@@ -30,7 +36,7 @@ class MotorControlSection(QWidget):
         self.slider1.setMinimum(0)
         self.slider1.setMaximum(187)
         self.slider1.setValue(93)
-        self.slider1.valueChanged.connect(lambda: self.update_motor_torque(1))
+        self.slider1.valueChanged.connect(lambda: self.slider_moved(1))
         layout.addWidget(QLabel(f"Slider 1 (Motors {self.motor_torque_mapping['slider1'][0]}, {self.motor_torque_mapping['slider1'][1]})"))
         layout.addWidget(self.slider1)
 
@@ -43,7 +49,7 @@ class MotorControlSection(QWidget):
         self.slider2.setMinimum(0)
         self.slider2.setMaximum(187)
         self.slider2.setValue(93)
-        self.slider2.valueChanged.connect(lambda: self.update_motor_torque(2))
+        self.slider2.valueChanged.connect(lambda: self.slider_moved(2))
         layout.addWidget(QLabel(f"Slider 2 (Motors {self.motor_torque_mapping['slider2'][0]}, {self.motor_torque_mapping['slider2'][1]})"))
         layout.addWidget(self.slider2)
 
@@ -51,19 +57,15 @@ class MotorControlSection(QWidget):
         self.slider2_value_label = QLabel(f"Torque value: {self.slider2.value()} Ncm")
         layout.addWidget(self.slider2_value_label)
 
-    def load_motor_mapping(self, filename):
-        """Load motor mapping from a .yaml file"""
-        with open(filename, "r") as file:
-            return yaml.safe_load(file)
-
+   
     def init_motor_controller(self):
         """Initialize the motor controller."""
         sync_mode = self.config.get('motor_slider_synchronization', 'sync_mode', default='independent')
         self.motor_controller = MotorController(sync_mode=sync_mode)
         self.motor_controller.motor_updated.connect(self.update_motor_display)
 
-    def update_motor_torque(self, slider_number):
-        """Update torque for the motors controlled by the given slider"""
+    def slider_moved(self, slider_number):
+        """Handle slider movements to adjust motor torque"""
         if slider_number == 1:
             motor1, motor2 = self.motor_torque_mapping['slider1']
             torque_value = self.slider1.value()
@@ -72,6 +74,8 @@ class MotorControlSection(QWidget):
             motor1, motor2 = self.motor_torque_mapping['slider2']
             torque_value = self.slider2.value()
             self.slider2_value_label.setText(f"Torque value: {torque_value} Ncm")
+        
+
 
     @pyqtSlot(int, float)
     def update_motor_display(self, motor_index, torque):

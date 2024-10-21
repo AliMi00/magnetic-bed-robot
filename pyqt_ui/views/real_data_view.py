@@ -1,11 +1,10 @@
 # views/real_data_view.py
 
 from PyQt6.QtWidgets import QLabel
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
-from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QLabel
+from PyQt6.QtGui import QPixmap, QFont
+from PyQt6.QtCore import Qt, pyqtSignal
 import os
+
 class ClickableLabel(QLabel):
     clicked = pyqtSignal()
 
@@ -27,11 +26,21 @@ class RealDataView(ClickableLabel):
         else:
             real_pixmap = QPixmap(600, 800)
             real_pixmap.fill(Qt.GlobalColor.darkGray)
+        
         window_width = self.config.get('window_settings', 'width', default=1200)
         window_height = self.config.get('window_settings', 'height', default=800)
         self.setPixmap(real_pixmap.scaled(window_width//2, window_height, Qt.AspectRatioMode.KeepAspectRatioByExpanding))
         self.setScaledContents(True)
         self.setFixedSize(window_width//2, window_height)
+
+        # Add "Real" text overlay
+        self.overlay_label_title = QLabel("Real", self)
+        self.overlay_label_title.setFont(QFont('Arial', 24, QFont.Weight.Bold))
+        self.overlay_label_title.setStyleSheet("color: white; background-color: rgba(0, 0, 0, 150); padding: 10px;")
+        self.overlay_label_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Set position and size of the "Real" label
+        self.overlay_label_title.setGeometry(0, 0, window_width//2, 50)  # Position at top-center
 
     def update_overlay(self, data):
         """Overlay sensor data as text."""
@@ -45,5 +54,6 @@ class RealDataView(ClickableLabel):
             self.overlay_label.setStyleSheet("color: white; background-color: rgba(0, 0, 0, 128);")
             self.overlay_label.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
             self.overlay_label.setFixedSize(self.width(), 100)
-            self.overlay_label.move(10, 10)  # Position at top-left corner
+            self.overlay_label.move(10, 60)  # Position slightly below the "Real" label
             self.overlay_label.show()
+

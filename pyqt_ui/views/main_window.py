@@ -1,3 +1,4 @@
+#views.main_window.py
 import os
 from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QStackedWidget
 from PyQt6.QtCore import pyqtSlot
@@ -10,7 +11,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.config = config_manager
         self.init_ui()
-        self.setStyleSheet("background-color: lightgray;")
+        self.setStyleSheet("background-color: white;")
         
         # Initialize data simulator
         from core.data_simulator import DataSimulator
