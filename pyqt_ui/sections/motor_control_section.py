@@ -16,7 +16,7 @@ class MotorControlSection(QWidget):
     def load_motor_mapping(self, filename):
         """Load motor mapping from a .yaml file"""
         with open(filename, "r") as file:
-            return yaml.safe_load(file)
+          return yaml.safe_load(file)
     
 
     def init_ui(self):
