@@ -5,6 +5,8 @@ from PyQt6.QtCore import Qt, pyqtSlot
 
 from core.motor_controller import MotorController
 import yaml
+import re 
+
 class MotorControlSection(QWidget):
     def __init__(self, config_manager, parent=None):
         super().__init__(parent)
@@ -17,7 +19,16 @@ class MotorControlSection(QWidget):
         """Load motor mapping from a .yaml file"""
         with open(filename, "r") as file:
           return yaml.safe_load(file)
-    
+        
+    def parse_torque_value(self, value):
+        """Parse the torque value and return numeric value and unit"""
+        match = re.match(r"(\d+(?:\.\d+)?)\s*(N.*)", value)
+        if not match:
+            raise ValueError(f"Invalid torque value format: {value}. Torque unit must start with 'N' as newton meter unit.")
+        numeric_value = float(match.group(1))
+        unit = match.group(2)
+
+        return numeric_value, unit
 
     def init_ui(self):
         """Initialize the Motor Control Section."""
@@ -30,33 +41,38 @@ class MotorControlSection(QWidget):
         title.setStyleSheet("font-weight: bold; font-size: 16px; padding-bottom: 10px;")
         layout.addWidget(title)
 
+        # Extract and parse maximum torque values
+        slider1_max_value, slider1_unit = self.parse_torque_value(self.motor_torque_mapping['slider1_max'])
+        slider2_max_value, slider2_unit = self.parse_torque_value(self.motor_torque_mapping['slider2_max'])
+
+        # Store units for use in displaying torque values later
+        self.slider1_unit = slider1_unit
+        self.slider2_unit = slider2_unit
        
         # Slider 1 (controls two motors)
         self.slider1 = QSlider(Qt.Orientation.Horizontal)
         self.slider1.setMinimum(0)
-        self.slider1.setMaximum(187)
-        self.slider1.setValue(93)
+        self.slider1.setMaximum(int(slider1_max_value))  # Use the max value as is
+        self.slider1.setValue(int(slider1_max_value / 2))  # Start at half the maximum value
         self.slider1.valueChanged.connect(lambda: self.slider_moved(1))
         layout.addWidget(QLabel(f"Slider 1 (Motors {self.motor_torque_mapping['slider1'][0]}, {self.motor_torque_mapping['slider1'][1]})"))
         layout.addWidget(self.slider1)
-
         # Add QLabel to show the torque value for slider 1
-        self.slider1_value_label = QLabel(f"Torque value: {self.slider1.value()} Ncm")
+        self.slider1_value_label = QLabel(f"Torque value: {self.slider1.value()} {self.slider1_unit}")
         layout.addWidget(self.slider1_value_label)
 
-        # Slider 2 (controls two motors)
+    # Slider 2 (controls two motors)
         self.slider2 = QSlider(Qt.Orientation.Horizontal)
         self.slider2.setMinimum(0)
-        self.slider2.setMaximum(187)
-        self.slider2.setValue(93)
+        self.slider2.setMaximum(int(slider2_max_value))  # Use the max value as is
+        self.slider2.setValue(int(slider2_max_value / 2))  # Start at half the maximum value
         self.slider2.valueChanged.connect(lambda: self.slider_moved(2))
         layout.addWidget(QLabel(f"Slider 2 (Motors {self.motor_torque_mapping['slider2'][0]}, {self.motor_torque_mapping['slider2'][1]})"))
         layout.addWidget(self.slider2)
 
         # Add QLabel to show the torque value for slider 2
-        self.slider2_value_label = QLabel(f"Torque value: {self.slider2.value()} Ncm")
+        self.slider2_value_label = QLabel(f"Torque value: {self.slider2.value()} {self.slider2_unit}")
         layout.addWidget(self.slider2_value_label)
-
    
     def init_motor_controller(self):
         """Initialize the motor controller."""
@@ -69,11 +85,11 @@ class MotorControlSection(QWidget):
         if slider_number == 1:
             motor1, motor2 = self.motor_torque_mapping['slider1']
             torque_value = self.slider1.value()
-            self.slider1_value_label.setText(f"Torque value: {torque_value} Ncm")
+            self.slider1_value_label.setText(f"Torque value: {torque_value} {self.slider1_unit}")
         elif slider_number == 2:
             motor1, motor2 = self.motor_torque_mapping['slider2']
             torque_value = self.slider2.value()
-            self.slider2_value_label.setText(f"Torque value: {torque_value} Ncm")
+            self.slider2_value_label.setText(f"Torque value: {torque_value} {self.slider2_unit}")
         
 
 
