@@ -1,4 +1,4 @@
-# parameters/motor_torque_sliders.yaml
+# config/motor_torque_sliders.yaml
 # choose which slider controls which two motors :)
 slider1: [1, 3]
 slider2: [2, 4]
