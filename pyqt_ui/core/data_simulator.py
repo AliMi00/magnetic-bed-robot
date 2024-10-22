@@ -26,10 +26,8 @@ class DataSimulator(QObject):
         while self.running:
             # Simulate some sensor data
             data = {
-                'motor1': random.uniform(20.0, 30.0),
-                'motor2': random.uniform(1.0, 2.0),
-                'motor3': random.uniform(30.0, 50.0),
-                'motor4': random.uniform(0.1, 0.5)
+                'Force': random.uniform(1.0, 30.0),
+                'Torque': random.uniform(0.1, 20.0)
             }
             self.data_updated.emit(data)
             time.sleep(1)  # Update every second

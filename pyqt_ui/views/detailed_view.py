@@ -1,10 +1,9 @@
-from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout
-from PyQt6.QtCore import pyqtSlot, pyqtSignal
-from core.config_manager import ConfigManager
+#views/detailed_view.py
+from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QSizePolicy, QFrame
+from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
 from core.data_simulator import DataSimulator
 from core.motor_controller import MotorController
 from core.camera_stream import CameraStreamHandler
-
 from sections.graph_section import GraphSection
 from sections.animation_section import AnimationSection
 from sections.camera_section import CameraSection
@@ -22,8 +21,8 @@ class DetailedView(QWidget):
 
         # Set background color based on data type
         background_color = self.config.get(
-            'real_data' if real_data else 'simulated', 
-            'background_color', 
+            'real_data' if real_data else 'simulated',
+            'background_color',
             default='lightgray'
         )
         self.setStyleSheet(f"background-color: {background_color};")
@@ -36,26 +35,54 @@ class DetailedView(QWidget):
 
         # Layout setup
         main_layout = QVBoxLayout()
+       
         grid_layout = QGridLayout()
         self.setLayout(main_layout)
 
         # Add button to move to main window
         self.main_window_button = QPushButton("Home")
+        self.main_window_button.setFixedSize(60, 20)
         self.main_window_button.clicked.connect(self.move_to_main_window)
         main_layout.addWidget(self.main_window_button)
 
-        # Add sections to grid
+        # Add sections to grid with frames for separation
         main_layout.addLayout(grid_layout)
-        grid_layout.addWidget(self.graph_section, 0, 0)
-        grid_layout.addWidget(self.animation_section, 0, 1)
-        grid_layout.addWidget(self.camera_section, 1, 0)
-        grid_layout.addWidget(self.motor_control_section, 1, 1)
+
+        # Create frames for separation
+        self.graph_frame = QFrame()
+        self.graph_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.graph_frame.setFrameShadow(QFrame.Shadow.Raised)
+        graph_layout = QVBoxLayout(self.graph_frame)
+        graph_layout.addWidget(self.graph_section)
+        grid_layout.addWidget(self.graph_frame, 0, 0)
+
+        self.animation_frame = QFrame()
+        self.animation_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.animation_frame.setFrameShadow(QFrame.Shadow.Raised)
+        animation_layout = QVBoxLayout(self.animation_frame)
+        animation_layout.addWidget(self.animation_section)
+        grid_layout.addWidget(self.animation_frame, 0, 1)
+
+        self.camera_frame = QFrame()
+        self.camera_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.camera_frame.setFrameShadow(QFrame.Shadow.Raised)
+        camera_layout = QVBoxLayout(self.camera_frame)
+        camera_layout.addWidget(self.camera_section)
+        grid_layout.addWidget(self.camera_frame, 1, 0)
+
+        self.motor_control_frame = QFrame()
+        self.motor_control_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.motor_control_frame.setFrameShadow(QFrame.Shadow.Raised)
+        motor_control_layout = QVBoxLayout(self.motor_control_frame)
+        motor_control_layout.addWidget(self.motor_control_section)
+        grid_layout.addWidget(self.motor_control_frame, 1, 1)
 
         # Configure grid layout ratios
         grid_layout.setRowStretch(0, 1)
         grid_layout.setRowStretch(1, 1)
         grid_layout.setColumnStretch(0, 1)
         grid_layout.setColumnStretch(1, 1)
+
 
         # Initialize data simulator if using simulated data
         if not self.real_data:
@@ -70,7 +97,6 @@ class DetailedView(QWidget):
         """Initialize the detailed view UI."""
         width = self.config.get('window_settings', 'width', default=1200)
         height = self.config.get('window_settings', 'height', default=800)
-        self.setFixedSize(width, height)
         self.setWindowTitle("Detailed View - Magnet Placement Machine")
 
     @pyqtSlot()
