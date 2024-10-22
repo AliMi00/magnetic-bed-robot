@@ -14,10 +14,10 @@ class MainWindow(QMainWindow):
         self.setStyleSheet("background-color: white;")
         
         # Initialize data simulator
-        from core.data_simulator import DataSimulator
-        self.data_simulator = DataSimulator()
-        self.data_simulator.data_updated.connect(self.update_real_data_view)
-        self.data_simulator.start()
+        # from core.data_simulator import DataSimulator
+        # self.data_simulator = DataSimulator()
+        # self.data_simulator.data_updated.connect(self.update_real_data_view)
+        # self.data_simulator.start()
 
     def init_ui(self):
         """Initialize the main window UI."""
