@@ -10,13 +10,13 @@ class DataSimulator(QObject):
         super().__init__(parent)
         self.running = False
         self.file_path = file_path
-        self.data = pd.read_csv('/home/am/pyqt/magnetic-bed-robot/pyqt_ui/config/HBsteel-M22-F.csv')  # Load the data from the file
+        self.data = pd.read_csv('config/HBsteel-M22-F.csv')  # Load the data from the file
         self.index = 0  # Start reading from the first row
 
     def start(self):
         """Start the data simulation in a separate thread."""
         self.running = True
-        self.data = pd.read_csv('/home/am/pyqt/magnetic-bed-robot/pyqt_ui/config/HBsteel-M22-F.csv')  # Reload the data
+        self.data = pd.read_csv('config/HBsteel-M22-F.csv')  # Reload the data
         threading.Thread(target=self.run, daemon=True).start()
 
     def stop(self):
