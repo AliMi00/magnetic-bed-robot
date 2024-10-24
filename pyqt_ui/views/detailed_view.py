@@ -86,9 +86,10 @@ class DetailedView(QWidget):
 
         # Initialize data simulator if using simulated data
         if not self.real_data:
-            self.data_simulator = DataSimulator()
-            self.data_simulator.data_updated.connect(self.graph_section.update_graph_data)
-            self.data_simulator.start()
+            # self.data_simulator = DataSimulator(file_path="config/param_set_axes.yaml")
+            # self.data_simulator.data_updated.connect(self.graph_section.update_graph_data)
+            # self.data_simulator.start()
+            pass
         else:
             # Initialize real data handlers here if necessary
             pass
@@ -104,31 +105,35 @@ class DetailedView(QWidget):
         """Handle the button click to move to the main window."""
         # Emit the signal to notify MainWindow to switch views
         self.back_to_main.emit()
+        self.cleanup()
+        self.graph_section.clear_graph_data()
         print("Home button clicked. Emitting back_to_main signal...")
 
     def set_real_data(self, real_data):
         """Update the view to use real or simulated data."""
         if self.real_data != real_data:
             self.real_data = real_data
-            background_color = self.config.get(
-                'real_data' if real_data else 'simulated', 
-                'background_color', 
-                default='lightgray'
-            )
-            self.setStyleSheet(f"background-color: {background_color};")
-            
-            # Start or stop data simulators accordingly
-            if real_data:
-                # Initialize real data handlers
-                self.cleanup_simulated_data()
-                # Initialize real data simulators if necessary
-            else:
-                # Initialize simulated data simulators
-                self.init_simulated_data()
+        background_color = self.config.get(
+            'real_data' if real_data else 'simulated', 
+            'background_color', 
+            default='lightgray'
+        )
+        self.setStyleSheet(f"background-color: {background_color};")
+        
+        # Start or stop data simulators accordingly
+        if real_data:
+            # Initialize real data handlers
+            self.cleanup_simulated_data()
+            # Initialize real data simulators if necessary
+        else:
+            # Initialize simulated data simulators
+            self.cleanup_simulated_data()
+            self.init_simulated_data()
 
     def init_simulated_data(self):
         """Initialize simulated data components."""
         if not hasattr(self, 'data_simulator'):
+
             self.data_simulator = DataSimulator()
             self.data_simulator.data_updated.connect(self.graph_section.update_graph_data)
             self.data_simulator.start()
