@@ -55,21 +55,33 @@ class MotorControlSection(QWidget):
         self.slider1.setMaximum(int(slider1_max_value))  # Use the max value as is
         self.slider1.setValue(int(slider1_max_value / 2))  # Start at half the maximum value
         self.slider1.valueChanged.connect(lambda: self.slider_moved(1))
-        layout.addWidget(QLabel(f"Slider 1 (Motors {self.motor_torque_mapping['slider1'][0]}, {self.motor_torque_mapping['slider1'][1]})"))
+        slider1_motors = self.motor_torque_mapping['slider1']
+        # Display motor(s) controlled by slider 1
+        motors_text_1 = ", ".join(map(str, slider1_motors))
+        motor_label_1 = "Motor" if len(slider1_motors) == 1 else "Motors"
+        layout.addWidget(QLabel(f"Slider 1 ({motor_label_1} {motors_text_1})"))
         layout.addWidget(self.slider1)
         # Add QLabel to show the torque value for slider 1
         self.slider1_value_label = QLabel(f"Torque value: {self.slider1.value()} {self.slider1_unit}")
         layout.addWidget(self.slider1_value_label)
 
-    # Slider 2 (controls two motors)
+        # Slider 2 (controls two motors)
         self.slider2 = QSlider(Qt.Orientation.Horizontal)
         self.slider2.setMinimum(0)
         self.slider2.setMaximum(int(slider2_max_value))  # Use the max value as is
         self.slider2.setValue(int(slider2_max_value / 2))  # Start at half the maximum value
         self.slider2.valueChanged.connect(lambda: self.slider_moved(2))
-        layout.addWidget(QLabel(f"Slider 2 (Motors {self.motor_torque_mapping['slider2'][0]}, {self.motor_torque_mapping['slider2'][1]})"))
+        slider2_motors = self.motor_torque_mapping['slider2']
+
+        # Display motor(s) controlled by slider 2
+        motors_text_2 = ", ".join(map(str, slider2_motors))
+        motor_label_2 = "Motor" if len(slider2_motors) == 1 else "Motors"
+        layout.addWidget(QLabel(f"Slider 2 ({motor_label_2} {motors_text_2})"))
         layout.addWidget(self.slider2)
 
+        # Add QLabel to show the torque value for slider 2
+        self.slider2_value_label = QLabel(f"Torque value: {self.slider2.value()} {self.slider2_unit}")
+        layout.addWidget(self.slider2_value_label)
         # Add QLabel to show the torque value for slider 2
         self.slider2_value_label = QLabel(f"Torque value: {self.slider2.value()} {self.slider2_unit}")
         layout.addWidget(self.slider2_value_label)
@@ -83,11 +95,11 @@ class MotorControlSection(QWidget):
     def slider_moved(self, slider_number):
         """Handle slider movements to adjust motor torque"""
         if slider_number == 1:
-            motor1, motor2 = self.motor_torque_mapping['slider1']
+            motors = self.motor_torque_mapping['slider1']
             torque_value = self.slider1.value()
             self.slider1_value_label.setText(f"Torque value: {torque_value} {self.slider1_unit}")
         elif slider_number == 2:
-            motor1, motor2 = self.motor_torque_mapping['slider2']
+            motors = self.motor_torque_mapping['slider2']
             torque_value = self.slider2.value()
             self.slider2_value_label.setText(f"Torque value: {torque_value} {self.slider2_unit}")
         
