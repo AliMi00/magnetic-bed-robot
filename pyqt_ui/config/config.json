@@ -1,0 +1,19 @@
+{
+    "window_settings": {
+      "width": 1200,
+      "height": 800,
+      "simulation_background": "assets/Simulation-image.png",
+      "real_data_background": "assets/Real-image.png",
+      "background_color": "lightgray"
+    },
+    "motor_slider_synchronization": {
+      "sync_mode": "independent"  
+    },
+    "simulated" :{
+      "background_color": "lightgray"
+    },
+    "real_data" :{
+      "background_color": "gray"
+    }
+  }
+  
