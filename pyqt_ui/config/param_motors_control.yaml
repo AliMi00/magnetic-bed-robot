@@ -1,7 +1,7 @@
 # config/motor_torque_sliders.yaml
 # choose which slider controls which two motors :)
-slider1: [1, 3]
-slider2: [2, 4]
+slider1: [1]
+slider2: [2]
 
 # Set the max value wanted per slider
 slider1_max: "5 Nm"
