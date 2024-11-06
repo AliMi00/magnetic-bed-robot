@@ -1,12 +1,12 @@
 #views/detailed_view.py
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QSizePolicy, QFrame
-from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
+from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt, QSize
 from core.data_simulator import DataSimulator
 from core.motor_controller import MotorController
 from core.camera_stream import CameraStreamHandler
 from sections.graph_section import GraphSection
 from sections.animation_section import AnimationSection
-from sections.camera_section import CameraSection
+from sections.video_section import AnimationSection as VideoSection 
 from sections.motor_control_section import MotorControlSection
 
 class DetailedView(QWidget):
@@ -30,7 +30,7 @@ class DetailedView(QWidget):
         # Initialize components
         self.graph_section = GraphSection(self.config)
         self.animation_section = AnimationSection()
-        self.camera_section = CameraSection(self.config)
+        self.video_section = VideoSection()
         self.motor_control_section = MotorControlSection(self.config)
 
         # Layout setup
@@ -67,7 +67,7 @@ class DetailedView(QWidget):
         self.camera_frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.camera_frame.setFrameShadow(QFrame.Shadow.Raised)
         camera_layout = QVBoxLayout(self.camera_frame)
-        camera_layout.addWidget(self.camera_section)
+        camera_layout.addWidget(self.video_section)
         grid_layout.addWidget(self.camera_frame, 1, 0)
 
         self.motor_control_frame = QFrame()
@@ -83,6 +83,14 @@ class DetailedView(QWidget):
         grid_layout.setColumnStretch(0, 1)
         grid_layout.setColumnStretch(1, 1)
 
+    def resizeEvent(self, event):
+            """Handle the window resize event to adjust the animation size to 1/4 of the screen."""
+            window_width = self.width()
+            window_height = self.height()
+            quarter_size = QSize(window_width // 2, window_height // 2)
+            
+            self.video_section.update_gif_size(quarter_size)
+            super().resizeEvent(event)
 
     def init_ui(self):
         """Initialize the detailed view UI."""
@@ -142,6 +150,5 @@ class DetailedView(QWidget):
         """Cleanup resources when switching views."""
         if hasattr(self, 'data_simulator'):
             self.data_simulator.stop()
-        self.camera_section.stop_camera()
         self.animation_section.stop_animation()
         # Add any other cleanup tasks here
