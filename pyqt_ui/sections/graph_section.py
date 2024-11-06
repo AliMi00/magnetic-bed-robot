@@ -50,10 +50,10 @@ class GraphSection(QWidget):
         self.plot_widget = pg.PlotWidget()
         self.plot_widget.addLegend(offset=(-10, -10))
 
-        self.force_x_plot = self.plot_widget.plot([], [], pen='r', name='Force_x')
-        self.force_y_plot = self.plot_widget.plot([], [], pen='g', name='Force_y')
+        self.force_x_plot = self.plot_widget.plot([], [], pen=pg.mkPen('r', width=3), name='Force_x')
+        self.force_y_plot = self.plot_widget.plot([], [], pen=pg.mkPen('g', width = 3), name='Force_y')
         if self.num_axes == 3:
-            self.force_z_plot = self.plot_widget.plot([], [], pen='b', name='Force_z')
+            self.force_z_plot = self.plot_widget.plot([], [], pen=pg.mkPen('b', width = 3), name='Force_z')
         # self.plot_widget.addLegend()
 
         layout.addWidget(self.plot_widget)
