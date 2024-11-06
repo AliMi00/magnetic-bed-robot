@@ -4,7 +4,10 @@ from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QStackedWidget
 from PyQt6.QtCore import pyqtSlot
 from .simulation_view import SimulationView
 from .real_data_view import RealDataView
-from .detailed_view import DetailedView
+# from .detailed_view import DetailedView
+from .simulated_detailed_view import DetailedView as SimulatedDetailedView
+from .real_detailed_view import DetailedView as RealDetailedView
+
 
 class MainWindow(QMainWindow):
     def __init__(self, config_manager):
@@ -34,7 +37,10 @@ class MainWindow(QMainWindow):
 
         # Initialize different views
         self.main_view = QWidget()
-        self.detailed_view = DetailedView(self.config, real_data=False)
+        # self.detailed_view = DetailedView(self.config, real_data=False)
+        self.real_detailed_view = RealDetailedView(self.config)
+        self.simulated_detailed_view = SimulatedDetailedView(self.config)
+
 
         # Setup main view layout
         main_layout = QHBoxLayout()
@@ -54,10 +60,12 @@ class MainWindow(QMainWindow):
 
         # Add views to stacked widget
         self.stacked_widget.addWidget(self.main_view)       # Index 0
-        self.stacked_widget.addWidget(self.detailed_view)   # Index 1
+        self.stacked_widget.addWidget(self.real_detailed_view)   # Index 1
+        self.stacked_widget.addWidget(self.simulated_detailed_view)  # Index 2
 
         # Connect the back_to_main signal from DetailedView to the slot
-        self.detailed_view.back_to_main.connect(self.show_main_view)
+        self.simulated_detailed_view.back_to_main.connect(self.show_main_view)
+        self.real_detailed_view.back_to_main.connect(self.show_main_view)
 
     @pyqtSlot(dict)
     def update_real_data_view(self, data):
@@ -66,13 +74,14 @@ class MainWindow(QMainWindow):
 
     def open_detailed_view_simulated(self):
         """Switch to the detailed view with simulated data."""
-        self.detailed_view.set_real_data(False)
-        self.stacked_widget.setCurrentWidget(self.detailed_view)
+        # self.detailed_view.set_real_data(False)
+        self.simulated_detailed_view.set_simulated()
+        self.stacked_widget.setCurrentWidget(self.simulated_detailed_view)
 
     def open_detailed_view_real(self):
         """Switch to the detailed view with real data."""
-        self.detailed_view.set_real_data(True)
-        self.stacked_widget.setCurrentWidget(self.detailed_view)
+        self.real_detailed_view.set_real_data()
+        self.stacked_widget.setCurrentWidget(self.real_detailed_view)
 
     @pyqtSlot()
     def show_main_view(self):
