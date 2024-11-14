@@ -1,4 +1,5 @@
-#views/detailed_view.py
+# views/simulated_detailed_view.py
+
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QSizePolicy, QFrame
 from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt, QSize
 from core.data_simulator import DataSimulator
@@ -13,8 +14,8 @@ class DetailedView(QWidget):
     # Define a custom signal to notify MainWindow to switch back to the main view
     back_to_main = pyqtSignal()
 
-    def __init__(self, config_manager, ):
-        super().__init__()
+    def __init__(self, config_manager, parent=None):
+        super().__init__(parent)
         self.config = config_manager
         
         self.init_ui()
@@ -83,20 +84,32 @@ class DetailedView(QWidget):
         grid_layout.setColumnStretch(0, 1)
         grid_layout.setColumnStretch(1, 1)
 
+        # Connect the motor control section's signal to the video section's slot
+        self.motor_control_section.next_video.connect(self.video_section.next_video)
+        self.motor_control_section.previous_video.connect(self.video_section.previous_video)
+
     def resizeEvent(self, event):
-            """Handle the window resize event to adjust the animation size to 1/4 of the screen."""
-            window_width = self.width()
-            window_height = self.height()
-            quarter_size = QSize(window_width // 2, window_height // 2)
-            
-            self.video_section.update_gif_size(quarter_size)
-            super().resizeEvent(event)
+        """Handle the window resize event to adjust the animation size to 1/4 of the screen."""
+        window_width = self.width()
+        window_height = self.height()
+        quarter_size = QSize(window_width // 2, window_height // 2)
+        
+        self.video_section.update_gif_size(quarter_size)
+        super().resizeEvent(event)
 
     def init_ui(self):
         """Initialize the detailed view UI."""
         width = self.config.get('window_settings', 'width', default=1200)
         height = self.config.get('window_settings', 'height', default=800)
         self.setWindowTitle("Detailed View - Magnet Placement Machine")
+    
+    @pyqtSlot()
+    def goto_next_video(self):
+        self.video_section.next_video()
+    
+    @pyqtSlot()
+    def goto_previous_video(self):
+        self.video_section.previous_video()
 
     @pyqtSlot()
     def move_to_main_window(self):
@@ -106,19 +119,6 @@ class DetailedView(QWidget):
         self.cleanup()
         self.graph_section.clear_graph_data()
         print("Home button clicked. Emitting back_to_main signal...")
-
-    # def set_real_data(self, real_data):
-    #     """Update the view to use simulated data."""
-
-    #     background_color = self.config.get(
-    #         'real_data' , 
-    #         'background_color', 
-    #         default='lightgray'
-    #     )
-    #     self.setStyleSheet(f"background-color: {background_color};")
-        
-    #     self.cleanup_simulated_data()
-    #     self.init_simulated_data()
 
     def set_simulated(self):
         """Update the view to use simulated data."""

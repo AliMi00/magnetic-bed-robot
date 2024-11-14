@@ -3,7 +3,7 @@
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QSlider, QLabel, QMessageBox, QPushButton, QComboBox, QStackedWidget, QHBoxLayout
 )
-from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal
 from PyQt6.QtGui import QFont
 import yaml
 import re
@@ -11,6 +11,11 @@ from core.motor_controller import MotorController
 
 
 class MotorControlSection(QWidget):
+
+    next_video = pyqtSignal()
+    previous_video = pyqtSignal()
+    
+
     def __init__(self, config_manager, parent=None):
         super().__init__(parent)
         self.config = config_manager
@@ -97,12 +102,16 @@ class MotorControlSection(QWidget):
         self.left_button.setFont(button_font)
         self.left_button.setStyleSheet(self.get_arrow_button_style())
         left_right_layout.addWidget(self.left_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.left_button.clicked.connect(self.on_left_button_clicked)
 
         # Right Button (→)
         self.right_button = QPushButton("→")
         self.right_button.setFont(button_font)
         self.right_button.setStyleSheet(self.get_arrow_button_style())
         left_right_layout.addWidget(self.right_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.right_button.clicked.connect(self.on_right_button_clicked)
+
+
 
         arm_layout.addLayout(left_right_layout)
 
@@ -204,6 +213,29 @@ class MotorControlSection(QWidget):
                 background-color: #f0f0f0;  /* Slightly darker when pressed */
             }
         """
+    #left button clicked
+    @pyqtSlot()
+    def on_left_button_clicked(self):
+        """Handle the left button click event."""
+        try:
+            # In a real application, move the robotic arm left here
+            print("Moving the robotic arm left")
+            self.next_video.emit()
+
+        except Exception as e:
+            QMessageBox.critical(self, "Left Button Error", f"Failed to move the robotic arm left: {e}")
+
+    #right button clicked
+    @pyqtSlot()
+    def on_right_button_clicked(self):
+        """Handle the right button click event."""
+        try:
+            # In a real application, move the robotic arm right here
+            print("Moving the robotic arm right")
+            self.previous_video.emit()
+        except Exception as e:
+            QMessageBox.critical(self, "Right Button Error", f"Failed to move the robotic arm right: {e}")
+
 
     @pyqtSlot(int, float)
     def update_motor_display(self, motor_index, torque):
