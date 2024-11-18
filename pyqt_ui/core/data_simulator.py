@@ -1,3 +1,5 @@
+# core/data_simulator.py
+
 import time
 import threading
 import pandas as pd

@@ -1,5 +1,5 @@
 #views/detailed_view.py
-from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QSizePolicy, QFrame
+from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QSizePolicy, QFrame, QLabel, QHBoxLayout
 from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
 from core.data_simulator import DataSimulator
 from core.motor_controller import MotorController
@@ -43,6 +43,24 @@ class DetailedView(QWidget):
         self.main_window_button.setFixedSize(60, 20)
         self.main_window_button.clicked.connect(self.move_to_main_window)
         main_layout.addWidget(self.main_window_button)
+
+          # Add horizontal layout for Home button and Page Title
+        header_layout = QHBoxLayout()
+
+        # Title Label 
+        self.page_title_label = QLabel("Real Page")  # Change to "Real Page" in real_detailed_view.py
+        self.page_title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.page_title_label.setStyleSheet("""
+            font-weight: bold; 
+            font-size: 16px; 
+            background-color: white;  /* Set background to white */
+            padding: 5px;
+        """)
+        header_layout.addWidget(self.page_title_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        # Add the header layout to the main layout
+        main_layout.addLayout(header_layout)
+
 
         # Add sections to grid with frames for separation
         main_layout.addLayout(grid_layout)
