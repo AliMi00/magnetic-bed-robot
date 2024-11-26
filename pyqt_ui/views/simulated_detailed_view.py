@@ -1,6 +1,6 @@
 # views/simulated_detailed_view.py
 
-from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QSizePolicy, QFrame
+from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QSizePolicy, QFrame, QHBoxLayout, QLabel
 from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt, QSize
 from core.data_simulator import DataSimulator
 from core.motor_controller import MotorController
@@ -9,6 +9,8 @@ from sections.graph_section import GraphSection
 from sections.animation_section import AnimationSection
 from sections.video_section import AnimationSection as VideoSection 
 from sections.motor_control_section import MotorControlSection
+from sections.motors_position_section import MotorsPositionSection
+
 
 class DetailedView(QWidget):
     # Define a custom signal to notify MainWindow to switch back to the main view
@@ -30,7 +32,7 @@ class DetailedView(QWidget):
 
         # Initialize components
         self.graph_section = GraphSection(self.config)
-        self.animation_section = AnimationSection()
+        self.motors_position_section = MotorsPositionSection(self.config)
         self.video_section = VideoSection()
         self.motor_control_section = MotorControlSection(self.config)
 
@@ -46,6 +48,27 @@ class DetailedView(QWidget):
         self.main_window_button.clicked.connect(self.move_to_main_window)
         main_layout.addWidget(self.main_window_button)
 
+        # Add horizontal layout for Home button and Page Title
+        header_layout = QHBoxLayout()
+        header_layout.setContentsMargins(0, 0, 0, 0)  # Remove margins from the header layout
+        header_layout.setSpacing(0)  # Minimize spacing between items in the header layout
+
+        # Title Label 
+        self.page_title_label = QLabel("Simulation Page")  # Change to "Real Page" in real_detailed_view.py
+        self.page_title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.page_title_label.setStyleSheet("""
+            font-weight: bold; 
+            font-size: 16px; 
+            background-color: white;  /* Set background to white */
+            padding: 0px;  /* Remove extra padding */
+            margin: 0px;   /* Remove extra margin */
+        """)
+        header_layout.addWidget(self.page_title_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        # Add the header layout to the main layout
+        main_layout.addLayout(header_layout, stretch=0)
+
+
         # Add sections to grid with frames for separation
         main_layout.addLayout(grid_layout)
 
@@ -57,12 +80,12 @@ class DetailedView(QWidget):
         graph_layout.addWidget(self.graph_section)
         grid_layout.addWidget(self.graph_frame, 0, 0)
 
-        self.animation_frame = QFrame()
-        self.animation_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.animation_frame.setFrameShadow(QFrame.Shadow.Raised)
-        animation_layout = QVBoxLayout(self.animation_frame)
-        animation_layout.addWidget(self.animation_section)
-        grid_layout.addWidget(self.animation_frame, 0, 1)
+        self.motors_position_frame = QFrame()
+        self.motors_position_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.motors_position_frame.setFrameShadow(QFrame.Shadow.Raised)
+        animation_layout = QVBoxLayout(self.motors_position_frame)
+        animation_layout.addWidget(self.motors_position_section)
+        grid_layout.addWidget(self.motors_position_frame, 0, 1)
 
         self.camera_frame = QFrame()
         self.camera_frame.setFrameShape(QFrame.Shape.StyledPanel)
