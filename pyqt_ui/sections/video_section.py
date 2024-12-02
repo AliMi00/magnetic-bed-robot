@@ -7,13 +7,14 @@ from PyQt6.QtGui import QMovie
 class AnimationSection(QWidget):
     next_video_signal = pyqtSignal()
     video_number = 0
-
+    frame_changed = pyqtSignal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.init_ui()
         self.init_animation()
         self.video_list = ["assets/m2.gif", "assets/m3.gif", "assets/m4.gif", "assets/m5.gif", "assets/m6.gif"]
+        self.gif.frameChanged.connect(self.on_frame_changed)
 
     def init_ui(self):
         """Initialize the Animation Data Section."""
@@ -36,6 +37,7 @@ class AnimationSection(QWidget):
     def update_gif(self, gif_path):
         """Update the GIF with the given path."""
         self.gif = QMovie(gif_path)
+        self.gif.frameChanged.connect(self.on_frame_changed)
         self.animation_label.setMovie(self.gif)
         self.update_gif_size(self.animation_label.size())
         self.gif.start()
@@ -61,3 +63,8 @@ class AnimationSection(QWidget):
         """Stop the GIF animation."""
         if self.gif is not None:
             self.gif.stop()
+
+    @pyqtSlot(int)
+    def on_frame_changed(self, frame_number):
+        """Emit the frame_changed signal when the frame of the GIF changes."""
+        self.frame_changed.emit(frame_number)

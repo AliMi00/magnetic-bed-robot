@@ -19,7 +19,7 @@ class DataSimulator(QObject):
         """Start the data simulation in a separate thread."""
         self.running = True
         self.data = pd.read_csv('config/HBsteel-M22-F.csv')  # Reload the data
-        threading.Thread(target=self.run, daemon=True).start()
+        # threading.Thread(target=self.run, daemon=True).start()
 
     def stop(self):
         """Stop the data simulation."""
@@ -40,4 +40,23 @@ class DataSimulator(QObject):
             }
             self.data_updated.emit(data)
             self.index += 1  # Move to the next row
-            time.sleep(0.1)  # Update every second
+            # time.sleep(0.1)  # Update every second
+
+    def emit_next_data(self, index=None):
+        """Emit the next data point."""
+        if index is not None:
+            self.index = index
+        if self.index < len(self.data):
+            row = self.data.iloc[self.index]
+            data = {
+                'Force_x': row["Force_M1.Force_x [newton]"],
+                'Force_y': row["Force_M1.Force_y [newton]"],
+                'Force_z': row["Force_M1.Force_z [newton]"],
+                'Distance': row["$dist_1 [mm]"],
+                'Distance_adjusted': row["Distance_adjusted"]
+            }
+            self.data_updated.emit(data)
+            self.index += 1
+        else:
+            self.index = 0
+            self.emit_next_data()

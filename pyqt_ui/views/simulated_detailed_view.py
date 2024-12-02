@@ -121,6 +121,9 @@ class DetailedView(QWidget):
         self.motor_control_section.next_video.connect(self.video_section.next_video)
         self.motor_control_section.previous_video.connect(self.video_section.previous_video)
 
+        # Connect the frameChanged signal to update the graph and motor positions
+        self.video_section.frame_changed.connect(self.update_on_frame_change)
+
     def resizeEvent(self, event):
         """Handle the window resize event to adjust the animation size to 1/4 of the screen."""
         window_width = self.width()
@@ -171,6 +174,7 @@ class DetailedView(QWidget):
         if not hasattr(self, 'data_simulator'):
             self.data_simulator = DataSimulator()
             self.data_simulator.data_updated.connect(self.graph_section.update_graph_data)
+            self.data_simulator.data_updated.connect(self.update_motor_positions)
             self.data_simulator.start()
 
     def cleanup_simulated_data(self):
@@ -183,5 +187,33 @@ class DetailedView(QWidget):
         """Cleanup resources when switching views."""
         if hasattr(self, 'data_simulator'):
             self.data_simulator.stop()
-        self.video_section.stop_animation()
         # Add any other cleanup tasks here
+
+    @pyqtSlot(int)
+    def update_on_frame_change(self, frame_number):
+        """Update the graph data and motor positions when the frame of the GIF changes."""
+        if frame_number == 0:
+            self.graph_section.clear_graph_data()
+        else:
+            if hasattr(self, 'data_simulator'):
+                self.data_simulator.emit_next_data(frame_number - 1)
+
+    @pyqtSlot(dict)
+    def update_motor_positions(self, data):
+        """Update motor positions based on the data."""
+        motor_data = {
+            'X': {'actual': data['Distance'], 'target': data['Distance_adjusted']},
+            'Y': {'actual': data['Distance'], 'target': data['Distance_adjusted']},
+            'Z': {'actual': data['Distance'], 'target': data['Distance_adjusted']}
+        }
+        self.motors_position_section.update_motor_positions(motor_data)
+
+    # @pyqtSlot(int)
+    # def update_graph_on_frame_change(self, frame_number):
+    #     """Update the graph data when the frame of the GIF changes."""
+    #     if frame_number == 0:
+    #         self.graph_section.clear_graph_data()
+    #     else:
+    #         if hasattr(self, 'data_simulator'):
+
+    #             self.data_simulator.emit_next_data(frame_number -1)

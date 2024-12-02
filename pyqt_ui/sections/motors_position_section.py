@@ -74,7 +74,8 @@ class MotorsPositionSection(QWidget):
             actual_position_item.setFlags(actual_position_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.table.setItem(i, 1, actual_position_item)
             
-            # Target Position remains editable, so it is not altered here
+            target_position_item = QTableWidgetItem(f"{values['target']} mm")
+            self.table.setItem(i, 2, target_position_item)
 
     def on_item_changed(self, item):
         """Handle changes made to the table."""

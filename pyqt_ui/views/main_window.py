@@ -91,6 +91,6 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         """Handle the window close event."""
-        self.data_simulator.stop()
-        self.detailed_view.cleanup()
+        # self.simulated_detailed_view.stop()
+        self.simulated_detailed_view.cleanup()
         event.accept()
