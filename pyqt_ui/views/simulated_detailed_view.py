@@ -46,12 +46,17 @@ class DetailedView(QWidget):
         self.main_window_button = QPushButton("Home")
         self.main_window_button.setFixedSize(60, 20)
         self.main_window_button.clicked.connect(self.move_to_main_window)
-        main_layout.addWidget(self.main_window_button)
 
         # Add horizontal layout for Home button and Page Title
         header_layout = QHBoxLayout()
         header_layout.setContentsMargins(0, 0, 0, 0)  # Remove margins from the header layout
-        header_layout.setSpacing(0)  # Minimize spacing between items in the header layout
+        header_layout.setSpacing(5)  # Reduce spacing between items in the header layout
+
+        # Add Home button to the header layout
+        header_layout.addWidget(self.main_window_button, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        # Add a stretch to keep the label centered
+        header_layout.addStretch(1)
 
         # Title Label 
         self.page_title_label = QLabel("Simulation Page")  # Change to "Real Page" in real_detailed_view.py
@@ -63,11 +68,16 @@ class DetailedView(QWidget):
             padding: 0px;  /* Remove extra padding */
             margin: 0px;   /* Remove extra margin */
         """)
-        header_layout.addWidget(self.page_title_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        header_layout.addWidget(self.page_title_label)
+
+        # Add another stretch after the label to center it properly
+        header_layout.addStretch(1)
 
         # Add the header layout to the main layout
-        main_layout.addLayout(header_layout, stretch=0)
+        main_layout.addLayout(header_layout)
 
+        # Add a stretch to ensure the header is pushed up, leaving space below
+        main_layout.addStretch(0)
 
         # Add sections to grid with frames for separation
         main_layout.addLayout(grid_layout)
@@ -173,5 +183,5 @@ class DetailedView(QWidget):
         """Cleanup resources when switching views."""
         if hasattr(self, 'data_simulator'):
             self.data_simulator.stop()
-        self.animation_section.stop_animation()
+        self.video_section.stop_animation()
         # Add any other cleanup tasks here

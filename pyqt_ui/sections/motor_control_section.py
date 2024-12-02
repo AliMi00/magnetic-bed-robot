@@ -220,7 +220,7 @@ class MotorControlSection(QWidget):
         try:
             # In a real application, move the robotic arm left here
             print("Moving the robotic arm left")
-            self.next_video.emit()
+            self.previous_video.emit()
 
         except Exception as e:
             QMessageBox.critical(self, "Left Button Error", f"Failed to move the robotic arm left: {e}")
@@ -232,7 +232,7 @@ class MotorControlSection(QWidget):
         try:
             # In a real application, move the robotic arm right here
             print("Moving the robotic arm right")
-            self.previous_video.emit()
+            self.next_video.emit()
         except Exception as e:
             QMessageBox.critical(self, "Right Button Error", f"Failed to move the robotic arm right: {e}")
 

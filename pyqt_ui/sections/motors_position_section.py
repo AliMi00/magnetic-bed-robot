@@ -37,7 +37,7 @@ class MotorsPositionSection(QWidget):
             self.table = QTableWidget(3, 3)  # 4 rows for X, Y, Z; 3 columns for Axis, Actual Position, Target Position
         else:
             self.table = QTableWidget(2, 3)  # 3 rows for X, Y; 3 columns for Axis, Actual Position, Target Position
-            
+
         self.table.setHorizontalHeaderLabels(["Axis", "Actual Position", "Target Position"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 

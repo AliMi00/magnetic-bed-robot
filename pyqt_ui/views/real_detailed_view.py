@@ -1,4 +1,4 @@
-#views/detailed_view.py
+#views/real_detailed_view.py
 from PyQt6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QSizePolicy, QFrame, QLabel, QHBoxLayout
 from PyQt6.QtCore import pyqtSlot, pyqtSignal, Qt
 from core.data_simulator import DataSimulator
@@ -13,8 +13,8 @@ class DetailedView(QWidget):
     # Define a custom signal to notify MainWindow to switch back to the main view
     back_to_main = pyqtSignal()
 
-    def __init__(self, config_manager):
-        super().__init__()
+    def __init__(self, config_manager, parent=None):
+        super().__init__(parent)
         self.config = config_manager
         self.init_ui()
 
